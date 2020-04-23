@@ -1,0 +1,33 @@
+{
+  "name": "contribution-graph-generator",
+  "version": "0.1.0-SNAPSHOT",
+  "description": "Contribution Graph Generator",
+  "scripts": {
+    "start": "ts-node src/index.tsx",
+    "test": "mocha --require ts-node/register --timeout 10000 test/*.ts"
+  },
+  "keywords": [
+    "brainfuck"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nwtgck/contribution-graph-generator"
+  },
+  "author": "Ryo Ota <nwtgck@nwtgck.org> (https://github.com/nwtgck)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.13.1",
+    "@types/power-assert": "^1.5.3",
+    "@types/react": "^16.9.34",
+    "@types/react-dom": "^16.9.6",
+    "mocha": "^7.1.1",
+    "power-assert": "^1.6.1",
+    "ts-node": "^8.9.0",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
