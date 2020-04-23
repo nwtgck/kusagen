@@ -11,4 +11,4 @@ export type Day = {
 }
 
 // NOTE: First element is Sunday
-export type Week = [Day, Day, Day, Day, Day, Day, Day]
+export type Week = readonly Day[]

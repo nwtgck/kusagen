@@ -24,7 +24,7 @@ function GraphDay(props: {day: Day, y: number}) {
     y={props.y}
     fill={props.day.color}
     data-count={15}
-    data-date="2019-04-21"
+    data-date={`${props.day.date.year}-${props.day.date.month}-${props.day.date.day}`}
   />
 }
 
@@ -32,8 +32,7 @@ function GraphWeek(props: {week: Week, x: number}) {
   return (
     <g transform={`translate(${props.x}, 0)`}>
       {
-        [...range({from: 0, to: 90, step: 15})]
-          .map((y, i) => <GraphDay key={i} y={y} day={props.week[i]}/>)
+        props.week.map((y, i) => <GraphDay key={i} y={i * 15} day={props.week[i]}/>)
       }
     </g>
   )
@@ -64,8 +63,7 @@ function GraphYear(props: {weeks: readonly Week[]}) {
         transform="translate(10, 20)"
       >
         {
-          [...range({from: 0, to: 832, step: 16})]
-            .map((x, i) => <GraphWeek key={i} week={props.weeks[i]} x={x}/>)
+          props.weeks.map((week, i) => <GraphWeek key={i} week={week} x={i * 16}/>)
         }
         {/* TODO: Hard code */}
         <text x={16} y={-9} className="month">
@@ -166,9 +164,11 @@ const colorMap = {
   0: "#ebedf0",
 };
 
-function countToIntensity(count: number, max: number): "1" | "2" | "3" | "4" {
+function countToIntensity(count: number, max: number): "0" | "1" | "2" | "3" | "4" {
   const r = count / max;
-  if (r < 0.245) {
+  if (r === 0) {
+    return "0";
+  } else if (r < 0.245) {
     return "1";
   } else if (r < 0.48){
     return "2";
@@ -209,9 +209,6 @@ function createWeek(): Week[] {
 }
 
 const ws = createWeek();
-
-const a = <GraphYear weeks={ws}/>;
-
 
 function getCalendarStartDate(today: Date): Date {
   const lastYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
@@ -260,7 +257,7 @@ function* generateDays(today: Date, dates: readonly Date[]) {
   const counts = datesToCount([...dropWhile(dates, d => d < date)]);
   while (+date <= +today) {
     const key = dateToString(date);
-    const count = (key in counts) ? counts[key]: 0;
+    const count: number = (key in counts) ? counts[key]: 0;
     yield {
       date: {
         year: date.getFullYear(),
@@ -270,6 +267,25 @@ function* generateDays(today: Date, dates: readonly Date[]) {
       count,
     };
     date = new Date(+date +  86400 * 1000);
+  }
+}
+
+function* generateWeeks(today: Date, dates: readonly Date[]) {
+  // TODO: Hard code
+  const max = 22;
+  const dayIter = generateDays(today, dates);
+  let daysInWeek: Day[] = [];
+  for (const day of dayIter) {
+    const intensity = countToIntensity(day.count, max);
+    daysInWeek.push({
+      date: day.date,
+      color: colorMap[intensity]
+    });
+    if (daysInWeek.length === 7) {
+      yield daysInWeek;
+      // Clear
+      daysInWeek = [];
+    }
   }
 }
 
@@ -299,6 +315,28 @@ const dates = [
   new Date(2019, 4 -1, 28),
   new Date(2019, 4 -1, 28),
   new Date(2019, 4 -1, 28),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
+  new Date(2020, 3 -1, 10),
 ];
 
 console.log('dropWhile', [...dropWhile([1, 2, 3, 4, 5, 6, 5, 4], e => e < 6)]);
@@ -306,8 +344,13 @@ console.log('dropWhile', [...dropWhile(dates, e => e < new Date(2019, 4 -1, 21))
 console.log('countBy', countBy([1, 2, 3, 4, 5, 6, 7], e => (e % 2).toString()))
 console.log('datesToCount', datesToCount(dates));
 const as = [...generateDays(new Date(), dates)];
-console.log('generateDays:', as);
+// console.log('generateDays:', as);
 console.log('getCalendarStartDate"', getCalendarStartDate(new Date()).getDate());
+// console.log('generateWeeks:', [...generateWeeks(new Date(), dates)])
+
+
+const ws2 = [...generateWeeks(new Date(), dates)];
+const a = <GraphYear weeks={ws2}/>;
 
 // TODO: Remove server
 //      (for debugging)
