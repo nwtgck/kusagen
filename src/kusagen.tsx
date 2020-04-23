@@ -237,6 +237,9 @@ export function* generateWeeks(today: Date, dates: readonly Date[]) {
       daysInWeek = [];
     }
   }
+  if (daysInWeek.length !== 0) {
+    yield daysInWeek;
+  }
 }
 
 export function ContributionGraph(props: {today: Date, dates: readonly Date[]}) {
