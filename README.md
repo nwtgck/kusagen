@@ -1,2 +1,2 @@
-# contribution-graph-generator
+# kusagen
 

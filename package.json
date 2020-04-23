@@ -1,5 +1,5 @@
 {
-  "name": "contribution-graph-generator",
+  "name": "kusagen",
   "version": "0.1.0-SNAPSHOT",
   "description": "Contribution Graph Generator",
   "scripts": {
