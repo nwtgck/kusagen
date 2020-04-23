@@ -1,7 +1,7 @@
 import * as React from "react";
 import {renderToString} from 'react-dom/server';
 import * as http from 'http';
-import {generateWeeks, YearGraph} from "./kusagen";
+import {ContributionGraph, generateWeeks, YearGraph} from "./kusagen";
 
 const dates = [
   new Date(2019, 4 -1, 19),
@@ -63,8 +63,8 @@ const dates = [
 // console.log('generateWeeks:', [...generateWeeks(new Date(), dates)])
 
 
-const ws2 = [...generateWeeks(new Date(), dates)];
-const a = <YearGraph weeks={ws2}/>;
+// const ws2 = [...generateWeeks(new Date(), dates)];
+const a = <ContributionGraph today={new Date(2020, 4 -1, 24)} dates={dates} />;
 
 // TODO: Remove server
 //      (for debugging)
