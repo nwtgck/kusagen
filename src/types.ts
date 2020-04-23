@@ -1,5 +1,9 @@
 export type Day = {
-  readonly date: Date,
+  readonly date: {
+    readonly year: number,
+    readonly month: number,
+    readonly day: number,
+  },
   readonly color: string,
 }
 
