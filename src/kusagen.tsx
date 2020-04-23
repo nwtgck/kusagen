@@ -142,7 +142,7 @@ const colorMap = {
 
 function countToIntensity(count: number, max: number): "0" | "1" | "2" | "3" | "4" {
   const r = count / max;
-  if (r === 0) {
+  if (r === 0 || max === 0) {
     return "0";
   } else if (r < 0.245) {
     return "1";
