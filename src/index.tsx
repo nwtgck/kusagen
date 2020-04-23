@@ -271,12 +271,17 @@ function* generateDays(today: Date, dates: readonly Date[]) {
 }
 
 function* generateWeeks(today: Date, dates: readonly Date[]) {
-  // TODO: Hard code
-  const max = 22;
+  let maxCount = 0;
+  const days = [];
   const dayIter = generateDays(today, dates);
-  let daysInWeek: Day[] = [];
   for (const day of dayIter) {
-    const intensity = countToIntensity(day.count, max);
+    if (day.count > maxCount) maxCount = day.count;
+    days.push(day);
+  }
+
+  let daysInWeek: Day[] = [];
+  for (const day of days) {
+    const intensity = countToIntensity(day.count, maxCount);
     daysInWeek.push({
       date: day.date,
       color: colorMap[intensity]
