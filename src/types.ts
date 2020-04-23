@@ -2,7 +2,7 @@ export type YearMonthDate = {
   readonly year: number,
   // NOTE: January is 1
   readonly month: number,
-  readonly day: number,
+  readonly date: number,
 }
 
 export type Day = {

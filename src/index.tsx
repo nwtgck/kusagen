@@ -1,7 +1,7 @@
 import * as React from "react";
 import {renderToString} from 'react-dom/server';
 import * as http from 'http';
-import {Day, Week, YearMonthDate} from "./types";
+import {Day, Week} from "./types";
 
 declare global {
   namespace JSX {
@@ -11,7 +11,7 @@ declare global {
   }
 }
 
-function GraphDay(props: {day: Day, y: number}) {
+function DayGraph(props: {day: Day, y: number}) {
   return <rect
     className="day"
     width={12}
@@ -20,28 +20,28 @@ function GraphDay(props: {day: Day, y: number}) {
     y={props.y}
     fill={props.day.color}
     data-count={15}
-    data-date={`${props.day.date.year}-${props.day.date.month}-${props.day.date.day}`}
+    data-date={`${props.day.date.year}-${props.day.date.month}-${props.day.date.date}`}
   />
 }
 
-function GraphWeek(props: {week: Week, x: number}) {
+function WeekGraph(props: {week: Week, x: number}) {
   return (
     <g transform={`translate(${props.x}, 0)`}>
       {
-        props.week.map((y, i) => <GraphDay key={i} y={i * 15} day={props.week[i]}/>)
+        props.week.map((y, i) => <DayGraph key={i} y={i * 15} day={props.week[i]}/>)
       }
     </g>
   )
 }
 
-function GraphYear(props: {weeks: readonly Week[]}) {
+function YearGraph(props: {weeks: readonly Week[]}) {
   return (
     <svg width={828} height={128} className="js-calendar-graph-svg">
       <g
         transform="translate(10, 20)"
       >
         {
-          props.weeks.map((week, i) => <GraphWeek key={i} week={week} x={i * 16}/>)
+          props.weeks.map((week, i) => <WeekGraph key={i} week={week} x={i * 16}/>)
         }
         {/* TODO: Hard code */}
         <text x={16} y={-9} className="month">
@@ -209,7 +209,7 @@ function* generateDays(today: Date, dates: readonly Date[]) {
       date: {
         year: date.getFullYear(),
         month: date.getMonth(),
-        day: date.getDate(),
+        date: date.getDate(),
       },
       count,
     };
@@ -302,7 +302,7 @@ console.log('getCalendarStartDate"', getCalendarStartDate(new Date()).getDate())
 
 
 const ws2 = [...generateWeeks(new Date(), dates)];
-const a = <GraphYear weeks={ws2}/>;
+const a = <YearGraph weeks={ws2}/>;
 
 // TODO: Remove server
 //      (for debugging)
