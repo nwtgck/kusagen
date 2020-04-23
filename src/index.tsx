@@ -1,7 +1,11 @@
 import * as React from "react";
 import {renderToString} from 'react-dom/server';
 import * as http from 'http';
-import {Day, Week} from "./types";
+import {Day, Week, YearMonthDate} from "./types";
+
+// TODO: Hard code
+
+process.env.TZ = 'Asia/Tokyo';
 
 declare global {
   namespace JSX {
@@ -209,18 +213,14 @@ const ws = createWeek();
 const a = <GraphYear weeks={ws}/>;
 
 
-function getCalendarStartDate(today: Date): { year: number, month: number, date: number } {
+function getCalendarStartDate(today: Date): Date {
   const lastYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
   // TODO: Smarter way
   let calendarStartDate: Date = lastYearDate;
   while(calendarStartDate.getDay() !== 0) {
     calendarStartDate = new Date(calendarStartDate.getTime() -  86400 * 1000);
   }
-  return {
-    year: calendarStartDate.getFullYear(),
-    month: calendarStartDate.getMonth() + 1,
-    date: calendarStartDate.getDate(),
-  }
+  return calendarStartDate
 }
 
 function* dropWhile<T>(array: readonly T[], p: (v: T) => boolean) {
@@ -237,9 +237,77 @@ function* dropWhile<T>(array: readonly T[], p: (v: T) => boolean) {
   }
 }
 
-console.log('dropWhile', [...dropWhile([1, 2, 3, 4, 5, 6, 5, 4], e => e < 6)]);
+// (base: https://www.consolelog.io/group-by-in-javascript/)
+function countBy<T>(array: readonly T[], prop: (v: T) => string) {
+  return array.reduce((groups: {[key: string]: number}, item) => {
+    const val = prop(item);
+    groups[val] = groups[val] ?? 0;
+    groups[val] += 1;
+    return groups
+  }, {})
+}
 
-console.log(getCalendarStartDate(new Date()));
+function dateToString(d: Date): string {
+  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+}
+
+function datesToCount(dates: readonly Date[]) {
+  return countBy(dates, dateToString);
+}
+
+function* generateDays(today: Date, dates: readonly Date[]) {
+  let date = getCalendarStartDate(today);
+  const counts = datesToCount([...dropWhile(dates, d => d < date)]);
+  while (+date <= +today) {
+    const key = dateToString(date);
+    const count = (key in counts) ? counts[key]: 0;
+    yield {
+      date: {
+        year: date.getFullYear(),
+        month: date.getMonth(),
+        day: date.getDate(),
+      },
+      count,
+    };
+    date = new Date(+date +  86400 * 1000);
+  }
+}
+
+const dates = [
+  new Date(2019, 4 -1, 19),
+  new Date(2019, 4 -1, 20),
+  new Date(2019, 4 -1, 20),
+  new Date(2019, 4 -1, 20),
+  new Date(2019, 4 -1, 21),
+  new Date(2019, 4 -1, 23),
+  new Date(2019, 4 -1, 23),
+  new Date(2019, 4 -1, 23),
+  new Date(2019, 4 -1, 24),
+  new Date(2019, 4 -1, 24),
+  new Date(2019, 4 -1, 25),
+  new Date(2019, 4 -1, 25),
+  new Date(2019, 4 -1, 26),
+  new Date(2019, 4 -1, 26),
+  new Date(2019, 4 -1, 26),
+  new Date(2019, 4 -1, 26),
+  new Date(2019, 4 -1, 26),
+  new Date(2019, 4 -1, 27),
+  new Date(2019, 4 -1, 27),
+  new Date(2019, 4 -1, 27),
+  new Date(2019, 4 -1, 27),
+  new Date(2019, 4 -1, 27),
+  new Date(2019, 4 -1, 28),
+  new Date(2019, 4 -1, 28),
+  new Date(2019, 4 -1, 28),
+];
+
+console.log('dropWhile', [...dropWhile([1, 2, 3, 4, 5, 6, 5, 4], e => e < 6)]);
+console.log('dropWhile', [...dropWhile(dates, e => e < new Date(2019, 4 -1, 21))]);
+console.log('countBy', countBy([1, 2, 3, 4, 5, 6, 7], e => (e % 2).toString()))
+console.log('datesToCount', datesToCount(dates));
+const as = [...generateDays(new Date(), dates)];
+console.log('generateDays:', as);
+console.log('getCalendarStartDate"', getCalendarStartDate(new Date()).getDate());
 
 // TODO: Remove server
 //      (for debugging)
