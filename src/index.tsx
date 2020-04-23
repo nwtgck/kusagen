@@ -223,6 +223,22 @@ function getCalendarStartDate(today: Date): { year: number, month: number, date:
   }
 }
 
+function* dropWhile<T>(array: readonly T[], p: (v: T) => boolean) {
+  let shouldDrop = true;
+  for(const e of array) {
+    if (shouldDrop) {
+      if(!p(e)) {
+        shouldDrop = false;
+        yield e;
+      }
+    } else {
+      yield e
+    }
+  }
+}
+
+console.log('dropWhile', [...dropWhile([1, 2, 3, 4, 5, 6, 5, 4], e => e < 6)]);
+
 console.log(getCalendarStartDate(new Date()));
 
 // TODO: Remove server
