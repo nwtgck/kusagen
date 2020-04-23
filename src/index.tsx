@@ -208,6 +208,23 @@ const ws = createWeek();
 
 const a = <GraphYear weeks={ws}/>;
 
+
+function getCalendarStartDate(today: Date): { year: number, month: number, date: number } {
+  const lastYearDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+  // TODO: Smarter way
+  let calendarStartDate: Date = lastYearDate;
+  while(calendarStartDate.getDay() !== 0) {
+    calendarStartDate = new Date(calendarStartDate.getTime() -  86400 * 1000);
+  }
+  return {
+    year: calendarStartDate.getFullYear(),
+    month: calendarStartDate.getMonth() + 1,
+    date: calendarStartDate.getDate(),
+  }
+}
+
+console.log(getCalendarStartDate(new Date()));
+
 // TODO: Remove server
 //      (for debugging)
 http.createServer((req, res) => {
