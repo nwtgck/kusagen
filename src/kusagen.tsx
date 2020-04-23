@@ -206,7 +206,7 @@ function* generateDays(today: Date, dates: readonly Date[]) {
     yield {
       date: {
         year: date.getFullYear(),
-        month: date.getMonth(),
+        month: date.getMonth()+1,
         date: date.getDate(),
       },
       count,
