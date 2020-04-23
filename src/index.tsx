@@ -1,6 +1,7 @@
 import * as React from "react";
 import {renderToString} from 'react-dom/server';
 import * as http from 'http';
+import {Day, Week} from "./types";
 
 declare global {
   namespace JSX {
@@ -9,14 +10,6 @@ declare global {
     }
   }
 }
-
-type Day = {
-  readonly date: Date,
-  readonly color: string,
-}
-
-// NOTE: First element is Sunday
-type Week = [Day, Day, Day, Day, Day, Day, Day]
 
 function GraphDay(props: {day: Day, y: number}) {
   return <rect
@@ -156,7 +149,7 @@ function GraphYear(props: {weeks: readonly Week[]}) {
   )
 }
 
-const a = <GraphYear weeks={weeks}/>
+const a = <GraphYear weeks={weeks}/>;
 
 // TODO: Remove server
 //      (for debugging)
