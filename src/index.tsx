@@ -64,7 +64,8 @@ const dates = [
 
 
 // const ws2 = [...generateWeeks(new Date(), dates)];
-const a = <ContributionGraph today={new Date(2020, 4 -1, 24)} dates={dates} />;
+const events = dates.map(d => {return {date: d}});
+const a = <ContributionGraph today={new Date(2020, 4 -1, 24)} events={events} />;
 
 // TODO: Remove server
 //      (for debugging)

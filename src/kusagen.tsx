@@ -242,7 +242,7 @@ export function* generateWeeks(today: Date, dates: readonly Date[]) {
   }
 }
 
-export function ContributionGraph(props: {today: Date, dates: readonly Date[]}) {
-  const weeks = [...generateWeeks(props.today, props.dates)];
+export function ContributionGraph(props: {today: Date, events: readonly {date: Date}[]}) {
+  const weeks = [...generateWeeks(props.today, props.events.map(e => e.date))];
   return <YearGraph weeks={weeks}/>
 }
